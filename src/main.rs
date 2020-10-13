@@ -48,7 +48,7 @@ impl Config {
         file_list.into_iter()
             .filter(|p| {
                 // Check if path is a directory, if not, drop it
-                fs::metadata(p).map(|md| { md.is_dir() }).is_ok()
+                fs::metadata(p).map(|md| { md.is_file() }).unwrap_or(false)
             })
             .collect()
     }
