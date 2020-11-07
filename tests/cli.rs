@@ -4,10 +4,15 @@ mod cli_tests {
 
     const EXECTUABLE: &str = "file_chop";
 
+    fn get_cmd() -> Command {
+        Command::cargo_bin(EXECTUABLE)
+            .expect("Executable's name has changed?")
+    }
+
     #[test]
     fn help() {
-        let mut cmd = Command::cargo_bin(EXECTUABLE)
-            .expect("Executable's name has changed?");
-        cmd.arg("-h").assert().success();
+        get_cmd().assert().success();
+        get_cmd().arg("-h").assert().success();
+        get_cmd().arg("--help").assert().success();
     }
 }
