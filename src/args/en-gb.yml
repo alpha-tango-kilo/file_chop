@@ -1,0 +1,35 @@
+name: file_chop
+version: "don't ask"
+author: Atk <atk@aaathats3as.com>
+about: Cut files up into pieces damn fast. Puts them back together again too
+args:
+  - CHOP:
+      help: Indicates you wish to chop up files
+      short: C
+      conflicts_with:
+        - PLOP
+  - PLOP:
+      help: Indicates you wish to put ('plop') files back together
+      short: P
+      conflicts_with:
+        - CHOP
+  - number:
+      help: The number of pieces you want to chop a file into
+      short: n
+      long: number
+      takes_value: true
+      conflicts_with:
+        - PLOP
+        - size
+  - size:
+      help: The size of the pieces you want to chop a file into (last piece may not be this size)
+      short: s
+      long: size
+      takes_value: true
+      conflicts_with:
+        - PLOP
+        - number
+  - verbose:
+      help: If you want to see the stream of conscious while the program runs
+      short: v
+      long: verbose
