@@ -14,3 +14,4 @@ clap = { version = "2.33", features = ["yaml"] }
 
 [dev-dependencies]
 assert_cmd = "1.0"
+tempfile = "3.1"
