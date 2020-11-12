@@ -4,7 +4,10 @@ use clap::{
     App,
     //load_yaml,
 };
+extern crate rayon;
+use rayon::prelude::*;
 use std::fs;
+use file_chop::chop;
 
 fn main() {
     //let yaml = load_yaml!("./args/en-gb.yml");
@@ -14,10 +17,12 @@ fn main() {
     let matches = App::new("file_chop")
         .arg(Arg::with_name("CHOP")
             .short("C")
-            .conflicts_with("PLOP"))
+            .conflicts_with("PLOP")
+            .required_unless("PLOP"))
         .arg(Arg::with_name("PLOP")
             .short("P")
-            .conflicts_with("CHOP"))
+            .conflicts_with("CHOP")
+            .required_unless("CHOP"))
         .arg(Arg::with_name("number")
             .short("n")
             .long("number")
@@ -41,6 +46,23 @@ fn main() {
             }))
         .get_matches();
 
-    println!("{:#?}", matches);
-    println!("{:?}", matches.values_of("file").unwrap());
+    let files = matches.values_of("files").unwrap();
+
+    if matches.is_present("CHOP") {
+        files.par_bridge().map(|path| -> (&str, u64) {
+            let size = fs::metadata(path)
+                .unwrap() // Checked already by argument checker
+                .len();
+            if let Some(n) = matches.value_of("number") {
+                let divisor = n.parse::<u64>().unwrap(); // Checked already by argument checker
+                (path, size / divisor)
+            } else {
+                panic!("Incomplete arguments for chopping found - this was supposed to have already been checked for");
+            }
+        }).for_each(|(path, slice_size)| { chop(path, slice_size) });
+    } else if matches.is_present("PLOP") {
+        // TODO :)
+    } else {
+        panic!("Program was called without an operation - this was supposed to have already been checked for");
+    }
 }
